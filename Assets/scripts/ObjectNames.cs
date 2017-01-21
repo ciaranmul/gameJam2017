@@ -7,7 +7,8 @@ namespace Assets.scripts
 {
     class ObjectNames
     {
-        public const string Player = "PlayArea";
+        public const string HeadOfPlayer = "MainCamera";
+        public const string PlayArea = "PlayArea";
         public const string Enemy = "Enemy";
     }
 

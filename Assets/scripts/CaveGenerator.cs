@@ -56,7 +56,6 @@ public class CaveGenerator : MonoBehaviour {
 		for(int i=0; i<Smoothing; i++){
 			Map = doSmoothing (Map);
 		}
-	    populateEnemies(Map);
 		populateGameObjects();
 		populateTreasure (Map);
 	}
@@ -142,24 +141,6 @@ public class CaveGenerator : MonoBehaviour {
 		}
 	}
 
-    private void populateEnemies(GridPiece[,] map)
-    {
-        var random = checkForSeed();
-        for (int x = 0; x < Width; x++)
-        {
-            for (int y = 0; y < Height; y++)
-            {
-                if (map[x, y] == GridPiece.None)
-                {
-                    if (random.Next(0, 100) < EnemyFillChance)
-                    {
-                        map[x, y] = GridPiece.Enemy;
-                    }
-                }
-            }
-        }
-    }
-
 	private void placeTreasure(int x, int y)
     {
 		var pos = new Vector3 (-Width / 2 + x + .5f, .5f, -Height / 2 + y + .5f);
@@ -177,26 +158,19 @@ public class CaveGenerator : MonoBehaviour {
 	            float scaler = Random.Range (0,10);
 	            if (x == 0 || y == 0 || x >= (Map.GetLength (0)-1) || y >= (Map.GetLength (1)-1))
 	            {
-	                var pos = weirdPositionalLogic(x, 5, y);
+	                var pos = positionCoordinates(x, 5, y);
 	                Instantiate (Wall, pos, Quaternion.identity);
 	            } 
-	            else switch (Map [x,y])
+	            else if (Map[x, y] == GridPiece.Wall)
 	            {
-	                case GridPiece.Wall:
-	                    var pos = weirdPositionalLogic(x, 5, y, scaler);
-	                    Instantiate (Wall, pos, Quaternion.identity);
-	                    break;
-	                case GridPiece.Enemy:
-	                    var position = weirdPositionalLogic(x, 1, y);
-	                    var rotation = RandomRotation(checkForSeed());
-	                    Instantiate(Enemy, position, rotation);
-	                    break;
+	                var pos = positionCoordinates(x, 5, y, scaler);
+	                Instantiate(Wall, pos, Quaternion.identity);
 	            }
 	        }
 	    }
 	}
 
-    private Vector3 weirdPositionalLogic(int x, int y, int z, float? scaler = null)
+    private Vector3 positionCoordinates(int x, int y, int z, float? scaler = null)
     {
         return scaler == null 
             ? new Vector3(-Width / 2 + x + .5f, y, -Height / 2 + z + .5f) 
