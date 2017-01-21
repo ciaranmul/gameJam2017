@@ -226,6 +226,6 @@ MonoBehaviour:
   EnemyFillChance: 1
   Seed: 
   TreasureLimit: 5
-  Wall: {fileID: 4385766732567250, guid: 7776537d0bf72e6418f2d42cf068469a, type: 2}
-  Treasure: {fileID: 4441239796669572, guid: 617b8916444445a4d940bc7200f67038, type: 2}
+  Wall: {fileID: 4087317175910346, guid: 1fda57f1f73206f478cfdd808b0bfbd4, type: 2}
+  Treasure: {fileID: 4533715877388378, guid: 617b8916444445a4d940bc7200f67038, type: 2}
   Enemy: {fileID: 4599660696120184, guid: 18498c7ceecc9c347832978a9780aa41, type: 2}
