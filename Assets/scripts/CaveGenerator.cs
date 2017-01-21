@@ -1,32 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.scripts;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CaveGenerator : MonoBehaviour {
 
 	// PUBLIC VARIABLES EXPOSED TO THE EDITOR
-	public int width;
-	public int height;
+	public int Width;
+	public int Height;
 
 	[Range(0,8)]
-	public int deathLimit;
+	public int DeathLimit;
 
 	[Range(0,8)]
-	public int birthLimit;
+	public int BirthLimit;
 
 	[Range(0,25)]
-	public int smoothing;
+	public int Smoothing;
 
 	[Range(0,100)]
-	public int fillChance;
+	public int WallFillChance;
 
-	public string seed;
+    [Range(0,100)]
+    public int EnemyFillChance;
 
-	public int treasureLimit;
+	public string Seed;
 
+	public int TreasureLimit;
 
 	// Tile map
-	bool[,] map;
+	public static GridPiece[,] Map;
 
 	// Wall Transform
 	public Transform Wall;
@@ -34,15 +38,27 @@ public class CaveGenerator : MonoBehaviour {
 	// Treasure Transform
 	public Transform Treasure;
 
+    // Enemy Tramform
+    public Transform Enemy;
+
+    public enum GridPiece
+    {
+        None = 0,
+        Wall = 1,
+        Enemy = 2
+    }
+
 	// Use this for initialization
 	void Start () {
-		map = new bool[width, height];
-		map = initialiseMap (map);
-		for(int i=0; i<smoothing; i++){
-			map = doSmoothing (map);
+
+		Map = new GridPiece[Width, Height];
+		Map = initialiseWalls (Map);
+		for(int i=0; i<Smoothing; i++){
+			Map = doSmoothing (Map);
 		}
-		populateGameObjects ();
-		populateTreasure (map);
+	    populateEnemies(Map);
+		populateGameObjects();
+		populateTreasure (Map);
 	}
 
 	// Update is called once per frame
@@ -50,46 +66,40 @@ public class CaveGenerator : MonoBehaviour {
 
 	}
 
-	System.Random checkForSeed(){
-		System.Random rand;
-
-		if (seed == "") {
-			rand = new System.Random ();
-		} else {
-			rand = new System.Random (seed.GetHashCode ());
-		}
-
-		return rand;
+	private System.Random checkForSeed()
+	{
+	    var rand = Seed == "" ? new System.Random () : new System.Random (Seed.GetHashCode ());
+	    return rand;
 	}
 
-	bool[,] initialiseMap(bool[,] map) {
+	private GridPiece[,] initialiseWalls(GridPiece[,] map) {
 		System.Random rand = checkForSeed ();
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (rand.Next (0, 100) < fillChance) {
-					map [x, y] = true;
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				if (rand.Next (0, 100) < WallFillChance) {
+					map [x, y] = GridPiece.Wall;
 				}
 			}
 		}
 		return map;
 	}
 
-	bool[,] doSmoothing(bool[,] oldMap){
-		bool[,] newMap = new bool[width,height];
+	private GridPiece[,] doSmoothing(GridPiece[,] oldMap){
+		var newMap = new GridPiece[Width,Height];
 		for (int x=0; x<oldMap.GetLength(0); x++){
 			for (int y=0; y<oldMap.GetLength(1); y++){
 				int neighbours = countNeighbours (oldMap, x, y);
-				if (oldMap [x, y]) {
-					if (neighbours < deathLimit) {
-						newMap [x, y] = false;
+				if (oldMap [x, y] == GridPiece.Wall) {
+					if (neighbours < DeathLimit) {
+						newMap [x, y] = GridPiece.None;
 					} else {
-						newMap [x, y] = true;
+						newMap [x, y] = GridPiece.Wall;
 					}
 				} else {
-					if (neighbours > birthLimit) {
-						newMap [x, y] = true;
+					if (neighbours > BirthLimit) {
+						newMap [x, y] = GridPiece.Wall;
 					} else {
-						newMap [x, y] = false;
+						newMap [x, y] = GridPiece.None;
 					}
 				}
 			}
@@ -97,7 +107,8 @@ public class CaveGenerator : MonoBehaviour {
 		return newMap;
 	}
 
-	int countNeighbours(bool[,] map, int x, int y){
+	private int countNeighbours(GridPiece[,] map, int x, int y)
+    {
 		int count = 0;
 		for (int i=-1; i<2; i++){
 			for (int j=-1; j<2; j++){
@@ -109,7 +120,7 @@ public class CaveGenerator : MonoBehaviour {
 					// neighbour is at edge of map
 					count++;
 				}
-				else if (map[neighbour_x,neighbour_y]){
+				else if (map[neighbour_x,neighbour_y] == GridPiece.Wall){
 					// neighbour is alive
 					count++;
 				}
@@ -118,12 +129,12 @@ public class CaveGenerator : MonoBehaviour {
 		return count;
 	}
 
-	void populateTreasure(bool[,] map){
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (map [x, y] == false) {
+	private void populateTreasure(GridPiece[,] map){
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				if (map [x, y] == GridPiece.None) {
 					int nbrs = countNeighbours (map, x, y);
-					if (nbrs >= treasureLimit) {
+					if (nbrs >= TreasureLimit) {
 						placeTreasure (x, y);
 					}
 				}
@@ -131,40 +142,88 @@ public class CaveGenerator : MonoBehaviour {
 		}
 	}
 
-	void placeTreasure(int x, int y){
-		Vector3 pos = new Vector3 (-width / 2 + x + .5f, .5f, -height / 2 + y + .5f);
+    private void populateEnemies(GridPiece[,] map)
+    {
+        var random = checkForSeed();
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                if (map[x, y] == GridPiece.None)
+                {
+                    if (random.Next(0, 100) < EnemyFillChance)
+                    {
+                        map[x, y] = GridPiece.Enemy;
+                    }
+                }
+            }
+        }
+    }
+
+	private void placeTreasure(int x, int y)
+    {
+		var pos = new Vector3 (-Width / 2 + x + .5f, .5f, -Height / 2 + y + .5f);
 		Instantiate (Treasure, pos, Quaternion.identity);
 	}
 
-	void populateGameObjects() {
-		if (map != null) {
-			for (int x = 0; x < width; x++) {
-				for (int y = 0; y < height; y++) {
-					float scaler = Random.Range (0,10);
-					if (x == 0 || y == 0 || x >= (map.GetLength (0)-1) || y >= (map.GetLength (1)-1)) {
-						Vector3 pos = new Vector3 (-width / 2 + x + .5f, 5, -height / 2 + y + .5f);
-						Instantiate (Wall, pos, Quaternion.identity);
-					} 
-					else if (map [x,y] == true) {
-						Vector3 pos = new Vector3 (-width / 2 + x + .5f, 5 - scaler, -height / 2 + y + .5f);
-						Instantiate (Wall, pos, Quaternion.identity);
-					}
-				}
-			}
-		}
+	private void populateGameObjects()
+	{
+	    if (Map == null) return;
+
+	    for (int x = 0; x < Width; x++)
+	    {
+	        for (int y = 0; y < Height; y++)
+	        {
+	            float scaler = Random.Range (0,10);
+	            if (x == 0 || y == 0 || x >= (Map.GetLength (0)-1) || y >= (Map.GetLength (1)-1))
+	            {
+	                var pos = weirdPositionalLogic(x, 5, y);
+	                Instantiate (Wall, pos, Quaternion.identity);
+	            } 
+	            else switch (Map [x,y])
+	            {
+	                case GridPiece.Wall:
+	                    var pos = weirdPositionalLogic(x, 5, y, scaler);
+	                    Instantiate (Wall, pos, Quaternion.identity);
+	                    break;
+	                case GridPiece.Enemy:
+	                    var position = weirdPositionalLogic(x, 1, y);
+	                    var rotation = RandomRotation(checkForSeed());
+	                    Instantiate(Enemy, position, rotation);
+	                    break;
+	            }
+	        }
+	    }
 	}
 
-	//void OnDrawGizmos() {
-	//	if (map != null) {
-	//		for (int x = 0; x < width; x ++) {
-	//			for (int y = 0; y < height; y ++) {
-	//				Gizmos.color = Color.black;
-	//				if (map [x, y] == true) {
-	//					Vector3 pos = new Vector3 (-width / 2 + x + .5f, 0.5f, -height / 2 + y + .5f);
-	//					Gizmos.DrawCube (pos, Vector3.one);
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+    private Vector3 weirdPositionalLogic(int x, int y, int z, float? scaler = null)
+    {
+        return scaler == null 
+            ? new Vector3(-Width / 2 + x + .5f, y, -Height / 2 + z + .5f) 
+            : new Vector3(-Width / 2 + x + .5f, y - scaler.Value, -Height / 2 + z + .5f);
+    }
+
+    private static Quaternion RandomRotation(System.Random random)
+    {
+        return Quaternion.Euler(0, RandomFloat(random, 0, 360), 0);
+    }
+
+    private static float RandomFloat(System.Random random, int upperBound, int lowerBound)
+    {
+        return (float)(random.NextDouble() * (upperBound - lowerBound) + lowerBound);
+    }
+
+    //void OnDrawGizmos() {
+    //	if (map != null) {
+    //		for (int x = 0; x < width; x ++) {
+    //			for (int y = 0; y < height; y ++) {
+    //				Gizmos.color = Color.black;
+    //				if (map [x, y] == true) {
+    //					Vector3 pos = new Vector3 (-width / 2 + x + .5f, 0.5f, -height / 2 + y + .5f);
+    //					Gizmos.DrawCube (pos, Vector3.one);
+    //				}
+    //			}
+    //		}
+    //	}
+    //}
 }
