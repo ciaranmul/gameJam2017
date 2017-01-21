@@ -140,8 +140,13 @@ public class CaveGenerator : MonoBehaviour {
 		if (map != null) {
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
-					if (map [x,y] == true) {
+					float scaler = Random.Range (0,10);
+					if (x == 0 || y == 0 || x >= (map.GetLength (0)-1) || y >= (map.GetLength (1)-1)) {
 						Vector3 pos = new Vector3 (-width / 2 + x + .5f, 5, -height / 2 + y + .5f);
+						Instantiate (Wall, pos, Quaternion.identity);
+					} 
+					else if (map [x,y] == true) {
+						Vector3 pos = new Vector3 (-width / 2 + x + .5f, 5 - scaler, -height / 2 + y + .5f);
 						Instantiate (Wall, pos, Quaternion.identity);
 					}
 				}
