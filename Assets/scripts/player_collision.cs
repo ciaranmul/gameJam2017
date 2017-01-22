@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class player_collision : MonoBehaviour {
 
-	int treasure_collected = 0;
 	public AudioSource audioSource;
 	public AudioClip pickup_sound;
 	// Use this for initialization
@@ -23,7 +22,8 @@ public class player_collision : MonoBehaviour {
 				audioSource.PlayOneShot (pickup_sound);
 			}
 			col.gameObject.SetActive (false);
-			treasure_collected ++;
+			ScoreManager.score++;
 		}
+
 	}
 }
