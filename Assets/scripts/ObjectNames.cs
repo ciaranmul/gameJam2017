@@ -15,5 +15,7 @@ namespace Assets.scripts
     class ObjectTags
     {
         public const string Wall = "Wall";
+        public const string Treasure = "Treasure";
+        public const string Enemy = "Enemy";
     }
 }

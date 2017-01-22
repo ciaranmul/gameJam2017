@@ -11,6 +11,7 @@ public class RisingWater : MonoBehaviour
     private float _speed = 0.01f;
     private float _velocity;
     private int _waveCount = 0;
+    public static float WaterHeight;
 
 	// Use this for initialization
 	void Start ()
@@ -23,6 +24,7 @@ public class RisingWater : MonoBehaviour
 	{
 	    _velocity = (_waveCount % 2 == 0) ? _speed : -_speed;
 		ChangeWaterLevel();
+	    WaterHeight = transform.position.y;
 	}
 
     void ChangeWaterLevel()

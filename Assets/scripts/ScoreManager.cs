@@ -18,6 +18,14 @@ public class ScoreManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		scoreText.text = "Artifacts: " + score;
+	    if (score >= 5)
+	    {
+	        // win condition
+	        var gameObject = GameObject.FindGameObjectWithTag("menu");
+	        gameObject.transform.position = new Vector3(gameObject.transform.position.x, 1,
+	        gameObject.transform.position.z);
+	        gameObject.GetComponentInChildren<TextMesh>().text = "You Win!";
+	    }
 	}
 
 }

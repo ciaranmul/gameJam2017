@@ -52,7 +52,6 @@ public class CaveGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
         Map = new GridPiece[Width, Height];
         Map = initialiseWalls(Map);
         for (int i = 0; i < Smoothing; i++)
