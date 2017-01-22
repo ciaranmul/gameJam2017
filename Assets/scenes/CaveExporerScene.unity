@@ -222,7 +222,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1549315649947166, guid: ba747047e86c6e04aa378caeb3d483b6, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114625564802786724, guid: ba747047e86c6e04aa378caeb3d483b6,
         type: 2}
@@ -271,12 +271,7 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ba747047e86c6e04aa378caeb3d483b6, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &596303158 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1675340104663684, guid: 51bfbe76286b6cf43a3f91d834e4a5ed,
-    type: 2}
-  m_PrefabInternal: {fileID: 2045406658}
---- !u!43 &622504091
+--- !u!43 &556300358
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -404,6 +399,11 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!1 &596303158 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1675340104663684, guid: 51bfbe76286b6cf43a3f91d834e4a5ed,
+    type: 2}
+  m_PrefabInternal: {fileID: 2045406658}
 --- !u!1 &733414428 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1688946660794004, guid: 51bfbe76286b6cf43a3f91d834e4a5ed,
@@ -609,7 +609,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1469595885347616, guid: 68c186e542194414691e195c6f53cc1a, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 82020526241336758, guid: 68c186e542194414691e195c6f53cc1a,
         type: 2}
@@ -629,7 +629,7 @@ Prefab:
     - {fileID: 114224788858340510, guid: 68c186e542194414691e195c6f53cc1a, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 68c186e542194414691e195c6f53cc1a, type: 2}
   m_IsPrefabParent: 0
---- !u!21 &1977356713
+--- !u!21 &2000363235
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -699,18 +699,18 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1908051863999526, guid: 51bfbe76286b6cf43a3f91d834e4a5ed, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 33574086138490402, guid: 51bfbe76286b6cf43a3f91d834e4a5ed,
         type: 2}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 622504091}
+      objectReference: {fileID: 556300358}
     - target: {fileID: 23815203452198048, guid: 51bfbe76286b6cf43a3f91d834e4a5ed,
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1977356713}
+      objectReference: {fileID: 2000363235}
     - target: {fileID: 1908051863999526, guid: 51bfbe76286b6cf43a3f91d834e4a5ed, type: 2}
       propertyPath: m_Name
       value: '[CameraRig]'
