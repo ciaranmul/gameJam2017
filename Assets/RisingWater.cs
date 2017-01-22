@@ -10,6 +10,7 @@ public class RisingWater : MonoBehaviour
     private float _max = 1.2f;
     private float _speed = 0.01f;
     private float _velocity;
+    private int _waveCount = 0;
 
 	// Use this for initialization
 	void Start ()
@@ -19,7 +20,31 @@ public class RisingWater : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-    {
-		transform.position += new Vector3(transform.position.x, _speed * Time.deltaTime);
+	{
+	    _velocity = (_waveCount % 2 == 0) ? _speed : -_speed;
+		ChangeWaterLevel();
 	}
+
+    void ChangeWaterLevel()
+    {
+        transform.position += new Vector3(transform.position.x, _velocity * Time.deltaTime);
+        HeightCheck();
+    }
+
+    void HeightCheck()
+    {
+        if (_velocity > 0 && transform.position.y >= _max ||
+            _velocity < 0 && transform.position.y <= _min)
+        {
+            StartCoroutine(Suspend());
+            _waveCount++;
+        }
+    }
+
+    IEnumerator Suspend()
+    {
+        this.enabled = false;
+        yield return new WaitForSeconds(100F);
+        this.enabled = true;
+    }
 }

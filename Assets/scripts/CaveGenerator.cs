@@ -23,7 +23,7 @@ public class CaveGenerator : MonoBehaviour
     [Range(0, 100)]
     public int WallFillChance;
 
-    [Range(0, 100)]
+    [Range(0, 1)]
     public float EnemyFillChance;
 
     public string Seed;
@@ -182,7 +182,7 @@ public class CaveGenerator : MonoBehaviour
             {
                 if (map[x, y] == GridPiece.None)
                 {
-                    if (random.Next(0, 100) < EnemyFillChance)
+                    if (random.NextDouble() < EnemyFillChance)
                     {
                         map[x, y] = GridPiece.Enemy;
                     }
